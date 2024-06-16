@@ -6,7 +6,7 @@ import { useState } from "react";
 import { parseAbi, parseEther } from "viem";
 import Link from "next/link";
 import { isNonNullAddress } from "@/lib/utils";
-import { SuccessDialog } from "@/components/success-dialog";
+import { SuccessDialog } from "@/components/Dialog/Success";
 
 // TODO: use the correct WETH contract ABI without parsing it
 const abi = parseAbi([

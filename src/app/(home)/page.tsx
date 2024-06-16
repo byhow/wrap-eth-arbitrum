@@ -1,4 +1,4 @@
-import WrapEth from "@/components/wrap-eth";
+import WrapEth from "@/components/Swap/WethInput";
 
 export default function Home() {
   return (

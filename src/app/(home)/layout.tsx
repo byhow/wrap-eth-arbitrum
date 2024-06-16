@@ -1,4 +1,4 @@
-import ConnectWalletButton from "@/components/rainbow-button";
+import ConnectWalletButton from "@/components/Button/ConnectWallet";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
