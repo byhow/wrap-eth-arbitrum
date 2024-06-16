@@ -1,12 +1,14 @@
 // components/WrapEth.tsx
 "use client";
 
-import { useSendTransaction, useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useState } from "react";
 import { parseAbi, parseEther } from "viem";
 import Link from "next/link";
-import { write } from "fs";
+import { isNonNullAddress } from "@/lib/utils";
+import { SuccessDialog } from "@/components/success-dialog";
 
+// TODO: use the correct WETH contract ABI without parsing it
 const abi = parseAbi([
   // only adding the relevant WETH contract ABI here
   "function deposit() public payable",
@@ -14,20 +16,19 @@ const abi = parseAbi([
   "function balanceOf(address owner) view returns (uint)",
 ]);
 
-const address =
-  (process.env.NEXT_PUBLIC_WETH_CONTRACT_ADDRESS as `0x{string}`) ||
-  "0x82af49447d8a07e3bd95bd0d56f35241523fbab1";
+const WETH_ADDRESS = process.env.NEXT_PUBLIC_WETH_CONTRACT_ADDRESS;
+
+const address = isNonNullAddress(WETH_ADDRESS)
+  ? WETH_ADDRESS
+  : "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"; // hardcoded WETH contract address
 
 const WrapEth = () => {
-  // const { data } = useSimulateContract({
-  //   abi: parseAbi(WETH_ABI),
-  //   address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-  //   functionName: "balanceOf",
-  //   args: ["0x3eAa3AaB7Cd7d5893213897bA750A8ee31E90d9a"],
-  // });
   const [amount, setAmount] = useState("0.0001");
-  const { data: wrapHash } = useSendTransaction();
-  const { writeContract, data: unwrapHash } = useWriteContract();
+  const { writeContract, data: hash } = useWriteContract();
+  const { data: receipt, status } = useWaitForTransactionReceipt({
+    hash,
+    pollingInterval: 1_000, // 1 second
+  });
 
   // will have to hardcode function name for viem to parse the function signature
   const handleWrap = () => {
@@ -69,11 +70,11 @@ const WrapEth = () => {
       >
         Unwrap
       </button>
-      {wrapHash && (
+      {hash && ( // TODO: decouple this loading and waiting for transaction receipt logic into a separate component
         <div>
-          View wrapped transaction on{" "}
+          View transaction on{" "}
           <Link
-            href={`https://arbiscan.io/tx/${wrapHash}`}
+            href={`https://arbiscan.io/tx/${hash}`}
             className="hover:text-blue-500 underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -82,19 +83,7 @@ const WrapEth = () => {
           </Link>
         </div>
       )}
-      {unwrapHash && (
-        <div>
-          View wrapped transaction on{" "}
-          <Link
-            href={`https://arbiscan.io/tx/${unwrapHash}`}
-            className="hover:text-blue-500 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Arbitrum Scan
-          </Link>
-        </div>
-      )}
+      <SuccessDialog open={status === "success"} />
     </div>
   );
 };
