@@ -9,7 +9,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "echo \"Error: no unit test specified\"",
+    "e2e": "echo \"Error: no e2e test specified\""
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.1.2",
