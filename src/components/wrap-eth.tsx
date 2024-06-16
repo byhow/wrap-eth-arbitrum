@@ -5,13 +5,18 @@ import { useSendTransaction, useWriteContract } from "wagmi";
 import { useState } from "react";
 import { parseAbi, parseEther } from "viem";
 import Link from "next/link";
+import { write } from "fs";
 
-const WETH_ABI = [
-  // Add the relevant WETH contract ABI here
+const abi = parseAbi([
+  // only adding the relevant WETH contract ABI here
   "function deposit() public payable",
   "function withdraw(uint wad) public",
   "function balanceOf(address owner) view returns (uint)",
-];
+]);
+
+const address =
+  (process.env.NEXT_PUBLIC_WETH_CONTRACT_ADDRESS as `0x{string}`) ||
+  "0x82af49447d8a07e3bd95bd0d56f35241523fbab1";
 
 const WrapEth = () => {
   // const { data } = useSimulateContract({
@@ -21,21 +26,23 @@ const WrapEth = () => {
   //   args: ["0x3eAa3AaB7Cd7d5893213897bA750A8ee31E90d9a"],
   // });
   const [amount, setAmount] = useState("0.0001");
-  const { data: wrapHash, sendTransaction } = useSendTransaction();
+  const { data: wrapHash } = useSendTransaction();
   const { writeContract, data: unwrapHash } = useWriteContract();
 
-  // TODO: use writeContract to wrap eth as well
-  const handleWrap = () =>
-    sendTransaction({
-      to: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+  // will have to hardcode function name for viem to parse the function signature
+  const handleWrap = () => {
+    writeContract({
+      abi,
+      address,
+      functionName: "deposit",
       value: parseEther(amount),
     });
+  };
 
   const handleUnwrap = () => {
-    console.log("Unwrapping", amount);
     writeContract({
-      abi: parseAbi(WETH_ABI),
-      address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+      abi,
+      address,
       functionName: "withdraw",
       args: [parseEther(amount)],
     });
