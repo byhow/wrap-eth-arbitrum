@@ -8,7 +8,7 @@ import { AxiomWebVitals } from "next-axiom";
 const inter = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "0x WETH Wrapper",
+  title: "WETH Wrapper",
   description:
     "A DApp for wrapping and unwrapping WETH tokens on the Ethereum L2 blockchain Arbitrum.",
 };

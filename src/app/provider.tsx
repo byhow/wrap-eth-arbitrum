@@ -18,7 +18,7 @@ import { WagmiProvider } from "wagmi";
 const { wallets } = getDefaultWallets();
 
 const config = getDefaultConfig({
-  appName: "0x WETH Wrapper",
+  appName: "WETH Wrapper",
   projectId: "YOUR_PROJECT_ID",
   wallets: [
     ...wallets,

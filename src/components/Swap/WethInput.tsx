@@ -36,7 +36,7 @@ const WrapEth = () => {
   const [ethAmount, setEthAmount] = useState("0.0001");
   const [wethAmount, setWethAmount] = useState("0.0001");
 
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, isDisconnected } = useAccount();
   const { writeContract, data: hash } = useWriteContract();
   const {
     data: receipt,
@@ -145,6 +145,9 @@ const WrapEth = () => {
 
   return (
     <div className="flex flex-col items-center justify-between p-24 space-y-6 border-2 rounded-3xl">
+      <p className="text-sm text-gray-500 mb-2">
+        Click on the arrow choose which currency you want to swap to &#58;&#41;
+      </p>
       <div className="relative">
         <input
           type="text"
@@ -195,7 +198,8 @@ const WrapEth = () => {
           {
             "text-white": canSwap,
             "bg-black": canSwap,
-            "text-red-500": !canSwap,
+            "text-black": !canSwap,
+            "bg-gray-100": !canSwap,
           }
         )}
         disabled={
@@ -205,10 +209,12 @@ const WrapEth = () => {
           isFetchingBalanceError
         }
       >
-        {isFetchingBalance
+        {isDisconnected
+          ? "Please Connect Wallet"
+          : isFetchingBalance
           ? "Loading"
           : amountIsZero
-          ? "Enter Amount"
+          ? "Enter Amount..."
           : canSwap
           ? isWrap
             ? "Wrap"
