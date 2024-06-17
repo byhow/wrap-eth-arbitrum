@@ -6,5 +6,4 @@
 1. Run `pnpm install`
 1. `pnpm dev`
 
-## TODO: 
-- [ ] do not sync the input numbers, only estimate the equivalent
+## TODO

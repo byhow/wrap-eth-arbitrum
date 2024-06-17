@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react"; // FIXME: use actual icons locally. iconi
 import { isNonNullAddress } from "@/lib/utils";
 import { SuccessDialog } from "@/components/Dialog/Success";
 import cn from "classnames";
+import { ErrorDialog } from "@/components/Dialog/Error";
 
 // TODO: use the correct WETH contract ABI without parsing it
 const abi = parseAbi([
@@ -21,6 +22,9 @@ const abi = parseAbi([
   "function withdraw(uint wad) public",
   "function balanceOf(address owner) view returns (uint)",
 ]);
+
+// TODO: since no 0x api can be used, we will hardcode the exchange rate
+const EXCHANGE_RATE = 0.9; // 1 ETH = 0.9 WETH
 
 const WETH_ADDRESS = process.env.NEXT_PUBLIC_WETH_CONTRACT_ADDRESS;
 
@@ -38,6 +42,7 @@ const WrapEth = () => {
     data: receipt,
     isSuccess,
     isFetching,
+    isError,
   } = useWaitForTransactionReceipt({
     hash,
     pollingInterval: 1_000, // 1 second
@@ -83,7 +88,7 @@ const WrapEth = () => {
       if (isNaN(parsedVal)) {
         setWethAmount("0");
       } else {
-        setWethAmount(truncateTo7Digits(parsedVal * 0.9));
+        setWethAmount(truncateTo7Digits(parsedVal * EXCHANGE_RATE));
       }
     }
   };
@@ -96,7 +101,7 @@ const WrapEth = () => {
       if (isNaN(parsedVal)) {
         setEthAmount("0");
       } else {
-        setEthAmount(truncateTo7Digits(parsedVal * 0.9));
+        setEthAmount(truncateTo7Digits(parsedVal / EXCHANGE_RATE));
       }
     }
   };
@@ -139,23 +144,26 @@ const WrapEth = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between p-24 space-y-4">
+    <div className="flex flex-col items-center justify-between p-24 space-y-6 border-2 rounded-3xl">
       <div className="relative">
         <input
           type="text"
           placeholder="Amount in ETH"
           value={ethAmount}
           onChange={handleEthAmountChange}
-          className="border border-gray-300 p-2 rounded-md mr-4 pr-8" // Added pr-8 to make room for the ETH string
+          className={cn("border border-gray-300 p-2 rounded-md pr-8", {
+            "bg-gray-100": !isWrap,
+          })} // Added pr-8 to make room for the ETH string
+          disabled={!isWrap}
         />
-        <span className="absolute inset-y-0 right-6 flex items-center text-sm">
+        <span className="absolute inset-y-0 right-2 flex items-center text-sm">
           ETH
         </span>
       </div>
 
       <button
         onClick={() => setIsWrap(!isWrap)}
-        className="border border-gray-300 rounded-md p-1"
+        className="border border-gray-300 rounded-3xl p-1"
       >
         {isWrap ? (
           <Icon icon="mdi:arrow-down" className="text-3xl" />
@@ -170,19 +178,26 @@ const WrapEth = () => {
           placeholder="Amount in WETH"
           value={wethAmount}
           onChange={handleWethAmountChange}
-          className="border border-gray-300 p-2 rounded-md mr-4 pr-8" // Added pr-8 to make room for the WETH string
+          className={cn("border border-gray-300 p-2 rounded-md pr-8", {
+            "bg-gray-100": isWrap,
+          })} // Added pr-8 to make room for the WETH string
+          disabled={isWrap}
         />
-        <span className="absolute inset-y-0 right-6 flex items-center text-sm">
+        <span className="absolute inset-y-0 right-2 flex items-center text-sm">
           WETH
         </span>
       </div>
 
       <button
         onClick={isWrap ? handleWrap : handleUnwrap}
-        className={cn("border border-gray-300 p-2 rounded-md", {
-          "text-grey-300": canSwap,
-          "text-red-500": !canSwap,
-        })}
+        className={cn(
+          "transition duration-500 ease-in-out delay-150 border border-gray-300 p-3 rounded-3xl w-full",
+          {
+            "text-white": canSwap,
+            "bg-black": canSwap,
+            "text-red-500": !canSwap,
+          }
+        )}
         disabled={
           !canSwap ||
           amountIsZero ||
@@ -195,7 +210,9 @@ const WrapEth = () => {
           : amountIsZero
           ? "Enter Amount"
           : canSwap
-          ? "Swap"
+          ? isWrap
+            ? "Wrap"
+            : "Unwrap"
           : "Insufficient Balance"}
       </button>
 
@@ -203,7 +220,8 @@ const WrapEth = () => {
         <p>Waiting for transaction to be confirmed...</p>
       )}
 
-      <SuccessDialog open={isSuccess} receipt={receipt} />
+      {isSuccess && <SuccessDialog open={isSuccess} receipt={receipt} />}
+      {isError && <ErrorDialog open={isError} address={userAddress} />}
     </div>
   );
 };
