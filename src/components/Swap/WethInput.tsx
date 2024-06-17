@@ -29,6 +29,8 @@ const WrapEth = () => {
     hash,
     pollingInterval: 1_000, // 1 second
   });
+  const [isWrap, setIsWrap] = useState(false); // wrap is true, unwrap is false
+  const arrow = isWrap ? "↓" : "↑";
 
   // will have to hardcode function name for viem to parse the function signature
   const handleWrap = () => {
@@ -51,24 +53,38 @@ const WrapEth = () => {
 
   return (
     <div className="flex flex-col items-center justify-between p-24 space-y-4">
-      <input
-        type="text"
-        placeholder="Amount in ETH"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className="border border-gray-300 p-2 w-48 rounded-md"
-      />
+      <div>
+        <input
+          type="text"
+          placeholder="Amount in ETH"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="border border-gray-300 p-2 w-24 rounded-md mr-4"
+        />
+        ETH
+      </div>
+
       <button
-        onClick={handleWrap}
+        onClick={() => setIsWrap(!isWrap)}
         className="border border-gray-300 p-2 rounded-md"
       >
-        Wrap
+        {arrow}
       </button>
+      <div className="flex-row">
+        <input
+          type="text"
+          placeholder="Amount in WETH"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="border border-gray-300 p-2 w-24 rounded-md mr-4"
+        />
+        WETH
+      </div>
       <button
-        onClick={handleUnwrap}
+        onClick={isWrap ? handleWrap : handleUnwrap}
         className="border border-gray-300 p-2 rounded-md"
       >
-        Unwrap
+        Swap
       </button>
       {hash && ( // TODO: decouple this loading and waiting for transaction receipt logic into a separate component
         <div>
@@ -83,7 +99,8 @@ const WrapEth = () => {
           </Link>
         </div>
       )}
-      <SuccessDialog open={status === "success"} />
+
+      <SuccessDialog open={status === "success"} receipt={receipt} />
     </div>
   );
 };
