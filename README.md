@@ -5,3 +5,6 @@
 1. Run `cp .env.example .env` and fill in your own config
 1. Run `pnpm install`
 1. `pnpm dev`
+
+## TODO: 
+- [ ] do not sync the input numbers, only estimate the equivalent

@@ -7,7 +7,7 @@ import {
   useBalance,
   useAccount,
 } from "wagmi";
-import { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { parseAbi, parseEther } from "viem";
 import { Icon } from "@iconify/react"; // FIXME: use actual icons locally. iconify only works client side
 import { isNonNullAddress } from "@/lib/utils";
@@ -29,7 +29,9 @@ const address = isNonNullAddress(WETH_ADDRESS)
   : "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"; // hardcoded WETH contract address
 
 const WrapEth = () => {
-  const [amount, setAmount] = useState("0.0001");
+  const [ethAmount, setEthAmount] = useState("0.0001");
+  const [wethAmount, setWethAmount] = useState("0.0001");
+
   const { address: userAddress } = useAccount();
   const { writeContract, data: hash } = useWriteContract();
   const {
@@ -41,7 +43,10 @@ const WrapEth = () => {
     pollingInterval: 1_000, // 1 second
   });
   const [isWrap, setIsWrap] = useState(false); // wrap is true, unwrap is false
-  const amountIsZero = parseEther(amount) === BigInt(0);
+  const amountIsZero = isWrap
+    ? parseEther(ethAmount) === BigInt(0)
+    : parseEther(wethAmount) === BigInt(0);
+
   const {
     data: balance,
     isFetching: isFetchingBalance,
@@ -53,18 +58,65 @@ const WrapEth = () => {
 
   const [canSwap, setCanSwap] = useState(false);
 
+  const truncateTo7Digits = (num: number) => {
+    let str = num.toString();
+    if (str.length > 7) {
+      const decimalIndex = str.indexOf(".");
+      const decimalPlaces =
+        decimalIndex === -1 ? 0 : str.length - decimalIndex - 1;
+      const totalPlaces = 7;
+      const placesAfterDecimal = Math.max(
+        0,
+        totalPlaces - (str.length - decimalPlaces)
+      );
+      str = num.toFixed(placesAfterDecimal);
+    }
+    str = parseFloat(str).toString();
+    return str;
+  };
+
+  const handleEthAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (/^[0-9.]*$/.test(val) && val.length <= 7) {
+      setEthAmount(val);
+      const parsedVal = parseFloat(val);
+      if (isNaN(parsedVal)) {
+        setWethAmount("0");
+      } else {
+        setWethAmount(truncateTo7Digits(parsedVal * 0.9));
+      }
+    }
+  };
+
+  const handleWethAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (/^[0-9.]*$/.test(val) && val.length <= 7) {
+      setWethAmount(val);
+      const parsedVal = parseFloat(val);
+      if (isNaN(parsedVal)) {
+        setEthAmount("0");
+      } else {
+        setEthAmount(truncateTo7Digits(parsedVal * 0.9));
+      }
+    }
+  };
+
   useEffect(() => {
     setCanSwap(
       isFetchingBalanceSuccess &&
-        parseEther(amount) < balance.value &&
+        (isWrap
+          ? parseEther(ethAmount) < balance.value
+          : parseEther(wethAmount) < balance.value) &&
         !amountIsZero
     );
   }, [
-    amount,
+    ethAmount,
+    wethAmount,
     isFetchingBalanceError,
     isFetchingBalanceSuccess,
     balance,
     amountIsZero,
+    isWrap,
   ]);
 
   // will have to hardcode function name for viem to parse the function signature
@@ -73,7 +125,7 @@ const WrapEth = () => {
       abi,
       address,
       functionName: "deposit",
-      value: parseEther(amount),
+      value: parseEther(ethAmount),
     });
   };
 
@@ -82,21 +134,23 @@ const WrapEth = () => {
       abi,
       address,
       functionName: "withdraw",
-      args: [parseEther(amount)],
+      args: [parseEther(wethAmount)],
     });
   };
 
   return (
     <div className="flex flex-col items-center justify-between p-24 space-y-4">
-      <div>
+      <div className="relative">
         <input
           type="text"
           placeholder="Amount in ETH"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="border border-gray-300 p-2 w-24 rounded-md mr-4"
+          value={ethAmount}
+          onChange={handleEthAmountChange}
+          className="border border-gray-300 p-2 rounded-md mr-4 pr-8" // Added pr-8 to make room for the ETH string
         />
-        ETH
+        <span className="absolute inset-y-0 right-6 flex items-center text-sm">
+          ETH
+        </span>
       </div>
 
       <button
@@ -109,16 +163,20 @@ const WrapEth = () => {
           <Icon icon="mdi:arrow-up" className="text-3xl" />
         )}
       </button>
-      <div className="flex-row">
+
+      <div className="relative">
         <input
           type="text"
           placeholder="Amount in WETH"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="border border-gray-300 p-2 w-24 rounded-md mr-4"
+          value={wethAmount}
+          onChange={handleWethAmountChange}
+          className="border border-gray-300 p-2 rounded-md mr-4 pr-8" // Added pr-8 to make room for the WETH string
         />
-        WETH
+        <span className="absolute inset-y-0 right-6 flex items-center text-sm">
+          WETH
+        </span>
       </div>
+
       <button
         onClick={isWrap ? handleWrap : handleUnwrap}
         className={cn("border border-gray-300 p-2 rounded-md", {
