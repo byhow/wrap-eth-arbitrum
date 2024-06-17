@@ -1,10 +1,15 @@
 // components/WrapEth.tsx
 "use client";
 
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useBalance,
+  useAccount,
+} from "wagmi";
 import { useState } from "react";
 import { parseAbi, parseEther } from "viem";
-import Link from "next/link";
+
 import { isNonNullAddress } from "@/lib/utils";
 import { SuccessDialog } from "@/components/Dialog/Success";
 
@@ -24,13 +29,29 @@ const address = isNonNullAddress(WETH_ADDRESS)
 
 const WrapEth = () => {
   const [amount, setAmount] = useState("0.0001");
+  const { address: userAddress } = useAccount();
   const { writeContract, data: hash } = useWriteContract();
-  const { data: receipt, status } = useWaitForTransactionReceipt({
+  const {
+    data: receipt,
+    isSuccess,
+    isFetching,
+  } = useWaitForTransactionReceipt({
     hash,
     pollingInterval: 1_000, // 1 second
   });
   const [isWrap, setIsWrap] = useState(false); // wrap is true, unwrap is false
   const arrow = isWrap ? "↓" : "↑";
+  const {
+    data: balance,
+    isSuccess: isFetchingBalanceSuccess,
+    isError: isFetchingBalanceError,
+  } = useBalance({
+    address: userAddress,
+  });
+
+  const canSwap =
+    isFetchingBalanceError ||
+    (isFetchingBalanceSuccess && parseEther(amount) > balance.value);
 
   // will have to hardcode function name for viem to parse the function signature
   const handleWrap = () => {
@@ -82,25 +103,19 @@ const WrapEth = () => {
       </div>
       <button
         onClick={isWrap ? handleWrap : handleUnwrap}
-        className="border border-gray-300 p-2 rounded-md"
+        className={`border border-gray-300 p-2 rounded-md ${
+          canSwap ? "text-grey-300" : "text-black"
+        }`}
+        disabled={canSwap}
       >
         Swap
       </button>
-      {hash && ( // TODO: decouple this loading and waiting for transaction receipt logic into a separate component
-        <div>
-          View transaction on{" "}
-          <Link
-            href={`https://arbiscan.io/tx/${hash}`}
-            className="hover:text-blue-500 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Arbitrum Scan
-          </Link>
-        </div>
+
+      {isFetching && ( // TODO: decouple this loading and waiting for transaction receipt logic into a separate component
+        <p>Waiting for transaction to be confirmed...</p>
       )}
 
-      <SuccessDialog open={status === "success"} receipt={receipt} />
+      <SuccessDialog open={isSuccess} receipt={receipt} />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import TokenSwap from "@/components/Swap/Swap";
 import WrapEth from "@/components/Swap/WethInput";
 
 export default function Home() {
