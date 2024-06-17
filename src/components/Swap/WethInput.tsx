@@ -12,6 +12,7 @@ import { parseAbi, parseEther } from "viem";
 import { Icon } from "@iconify/react"; // FIXME: use actual icons locally. iconify only works client side
 import { isNonNullAddress } from "@/lib/utils";
 import { SuccessDialog } from "@/components/Dialog/Success";
+import cn from "classnames";
 
 // TODO: use the correct WETH contract ABI without parsing it
 const abi = parseAbi([
@@ -40,7 +41,7 @@ const WrapEth = () => {
     pollingInterval: 1_000, // 1 second
   });
   const [isWrap, setIsWrap] = useState(false); // wrap is true, unwrap is false
-
+  const amountIsZero = parseEther(amount) === BigInt(0);
   const {
     data: balance,
     isFetching: isFetchingBalance,
@@ -53,8 +54,18 @@ const WrapEth = () => {
   const [canSwap, setCanSwap] = useState(false);
 
   useEffect(() => {
-    setCanSwap(isFetchingBalanceSuccess && parseEther(amount) < balance.value);
-  }, [amount, isFetchingBalanceError, isFetchingBalanceSuccess, balance]);
+    setCanSwap(
+      isFetchingBalanceSuccess &&
+        parseEther(amount) < balance.value &&
+        !amountIsZero
+    );
+  }, [
+    amount,
+    isFetchingBalanceError,
+    isFetchingBalanceSuccess,
+    balance,
+    amountIsZero,
+  ]);
 
   // will have to hardcode function name for viem to parse the function signature
   const handleWrap = () => {
@@ -110,16 +121,24 @@ const WrapEth = () => {
       </div>
       <button
         onClick={isWrap ? handleWrap : handleUnwrap}
-        className={`border border-gray-300 p-2 rounded-md ${
-          canSwap ? "text-grey-300" : "text-red-500"
-        }`}
-        disabled={!canSwap}
+        className={cn("border border-gray-300 p-2 rounded-md", {
+          "text-grey-300": canSwap,
+          "text-red-500": !canSwap,
+        })}
+        disabled={
+          !canSwap ||
+          amountIsZero ||
+          isFetchingBalance ||
+          isFetchingBalanceError
+        }
       >
         {isFetchingBalance
           ? "Loading"
+          : amountIsZero
+          ? "Enter Amount"
           : canSwap
           ? "Swap"
-          : "Insufficient balance"}
+          : "Insufficient Balance"}
       </button>
 
       {isFetching && ( // TODO: decouple this loading and waiting for transaction receipt logic into a separate component
