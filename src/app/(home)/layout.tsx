@@ -1,4 +1,4 @@
-import ConnectWalletButton from "@/components/Button/ConnectWallet";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           WETH on Arbitrum
         </Link>
         <div className="flex min-w-[30%] flex-col items-end md:min-w-[inherit] md:flex-row md:items-center my-2 mr-2">
-          <ConnectWalletButton label="Connect" />
+          <ConnectButton label="Connect" />
         </div>
       </header>
 
