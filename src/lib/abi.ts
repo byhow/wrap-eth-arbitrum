@@ -1,4 +1,5 @@
 // TODO: we may be able to cut down some items with only the ones we need for the swap
+// This is WETH's ABI from the Ethereum mainnet
 export const ABI = [
   {
     "constant": true,

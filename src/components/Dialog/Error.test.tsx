@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import ErrorDialog from "./Error";
 import "@testing-library/jest-dom";
-import { mockDialogFn, RECEIPT } from "./helper";
+import { mockDialogFn } from "./helper";
 
 describe("ErrorDialog", () => {
   beforeAll(mockDialogFn);

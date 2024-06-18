@@ -10,3 +10,10 @@ export enum ButtonText {
 
 // TODO: since no 0x api can be used, we will hardcode the exchange rate
 export const EXCHANGE_RATE = 0.9; // 1 ETH = 0.9 WETH
+
+// methods that we would be using for interacting with WETH
+export const WETH_ABI = [
+  "function deposit() public payable",
+  "function withdraw(uint wad) public",
+  "function balanceOf(address owner) view returns (uint)",
+];

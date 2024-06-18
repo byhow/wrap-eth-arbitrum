@@ -1,4 +1,4 @@
-import { ButtonText } from "@/lib/contants";
+import { ButtonText } from "@/lib/constants";
 import cn from "classnames";
 
 type SwapButtonProps = {

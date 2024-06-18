@@ -1,12 +1,13 @@
 import { useSimulateContract } from "wagmi";
 import { parseAbi } from "viem";
+import { WETH_ABI } from "@/lib/constants";
 
-const WETH_ABI = [
-  "function deposit() public payable",
-  "function withdraw(uint wad) public",
-  "function balanceOf(address owner) view returns (uint)",
-];
-
+/**
+ * Custom hook to get the WETH balance of a given address.
+ * 
+ * @param address - The Ethereum address for which to retrieve the WETH balance.
+ * @returns The WETH balance of the specified address.
+ */
 export const useWethBalance = (address: string) => {
   return useSimulateContract({
     abi: parseAbi(WETH_ABI),

@@ -40,13 +40,25 @@ export const RECEIPT: NonNullable<UseWaitForTransactionReceiptReturnType["data"]
   type: "eip1559",
 };
 
+/**
+ * Mocks the `showModal` and `close` methods of the HTMLDialogElement prototype.
+ * Vitest/jest/jsdom has not have support for dialog elements yet.
+ */
 export const mockDialogFn = () => {
+  /**
+   * Mocks the `showModal` method of the HTMLDialogElement prototype.
+   * Sets the `open` property of the dialog element to `true`.
+   */
   HTMLDialogElement.prototype.showModal = vi.fn(function mock(
     this: HTMLDialogElement
   ) {
     this.open = true;
   });
 
+  /**
+   * Mocks the `close` method of the HTMLDialogElement prototype.
+   * Sets the `open` property of the dialog element to `false`.
+   */
   HTMLDialogElement.prototype.close = vi.fn(function mock(
     this: HTMLDialogElement
   ) {

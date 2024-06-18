@@ -14,15 +14,10 @@ import AmountInput from "@/components/Swap/AmountInput";
 import SwapButton from "@/components/Button/SwapButton";
 import { safeGetWethAddress } from "@/lib/config";
 import { truncateTo7Digits } from "@/lib/utils";
-import { EXCHANGE_RATE } from "@/lib/contants";
+import { EXCHANGE_RATE, WETH_ABI } from "@/lib/constants";
 
 // TODO: use the correct WETH contract ABI without parsing it
-const abi = parseAbi([
-  // only adding the relevant WETH contract ABI here
-  "function deposit() public payable",
-  "function withdraw(uint wad) public",
-  "function balanceOf(address owner) view returns (uint)",
-]);
+const abi = parseAbi(WETH_ABI);
 
 export default function Home() {
   const [ethAmount, setEthAmount] = useState("0.0001");

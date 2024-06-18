@@ -12,6 +12,10 @@ export const config = createConfig({
   },
 })
 
+/**
+ * Retrieves the WETH contract address from the environment variable or uses a default address.
+ * @returns The WETH contract address.
+ */
 export function safeGetWethAddress(): Address {
   const log = new Logger();
   const defaultAddress = "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"; // hardcoded WETH contract address
