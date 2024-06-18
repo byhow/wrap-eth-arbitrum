@@ -19,7 +19,12 @@ Some of the notable packages that were used:
 1. Run `cp .env.example .env` and fill in your own config for the node
 1. Run `pnpm install` then `pnpm dev`
 
-This code is 100% test covered (except view, hooks and constants), and you can check the test by running `pnpm test` and coverage by running `pnpm coverage`.
+## Test
+This code is 100% test covered (except view, hooks and constants), and you can check the test by running `pnpm test` and coverage by running `pnpm coverage`. Each component test suites are under their corresponding folders, and for util functions are in `/tests`.
+
+## Build
+There are also build pipelines that runs over github actions
+
 
 ## Requirement
 - use Next.js, React, TypeScript
