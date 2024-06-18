@@ -7,3 +7,6 @@
 1. `pnpm dev`
 
 ## TODO
+- [ ] refactor the biggest component
+- [ ] add tests accordingly
+- [ ] add readme? oh webvitals and loggings
