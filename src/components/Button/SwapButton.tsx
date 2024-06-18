@@ -1,3 +1,4 @@
+import { ButtonText } from "@/lib/contants";
 import cn from "classnames";
 
 type SwapButtonProps = {
@@ -31,17 +32,17 @@ const SwapButton: React.FC<SwapButtonProps> = ({
     }
   );
 
-  let buttonText = "Enter Amount...";
+  let buttonText = ButtonText.ENTER_AMOUNT;
   if (isWalletDisconnected) {
-    buttonText = "Please Connect Wallet";
+    buttonText = ButtonText.PLEASE_CONNECT_WALLET;
   } else if (isFetchingBalance) {
-    buttonText = "Loading";
+    buttonText = ButtonText.LOADING;
   } else if (canSwap) {
-    buttonText = isWrap ? "Wrap" : "Unwrap";
+    buttonText = isWrap ? ButtonText.WRAP : ButtonText.UNWRAP;
   } else if (amountIsZero) {
-    buttonText = "Enter Amount...";
+    buttonText = ButtonText.ENTER_AMOUNT;
   } else {
-    buttonText = "Insufficient Balance";
+    buttonText = ButtonText.INSUFFICIENT_BALANCE;
   }
 
   return (

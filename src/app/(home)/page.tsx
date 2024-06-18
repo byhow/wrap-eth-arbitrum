@@ -14,6 +14,7 @@ import AmountInput from "@/components/Swap/AmountInput";
 import SwapButton from "@/components/Button/SwapButton";
 import { safeGetWethAddress } from "@/lib/config";
 import { truncateTo7Digits } from "@/lib/utils";
+import { EXCHANGE_RATE } from "@/lib/contants";
 
 // TODO: use the correct WETH contract ABI without parsing it
 const abi = parseAbi([
@@ -23,8 +24,6 @@ const abi = parseAbi([
   "function balanceOf(address owner) view returns (uint)",
 ]);
 
-// TODO: since no 0x api can be used, we will hardcode the exchange rate
-const EXCHANGE_RATE = 0.9; // 1 ETH = 0.9 WETH
 export default function Home() {
   const [ethAmount, setEthAmount] = useState("0.0001");
   const [wethAmount, setWethAmount] = useState("0.0001");
