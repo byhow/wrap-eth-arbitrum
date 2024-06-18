@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { type UseWaitForTransactionReceiptReturnType } from "wagmi";
 
 export const RECEIPT: NonNullable<UseWaitForTransactionReceiptReturnType["data"]> = {
@@ -38,3 +39,23 @@ export const RECEIPT: NonNullable<UseWaitForTransactionReceiptReturnType["data"]
   transactionIndex: 3,
   type: "eip1559",
 };
+
+export const mockDialogFn = () => {
+  HTMLDialogElement.prototype.show = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = true;
+  });
+
+  HTMLDialogElement.prototype.showModal = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = true;
+  });
+
+  HTMLDialogElement.prototype.close = vi.fn(function mock(
+    this: HTMLDialogElement
+  ) {
+    this.open = false;
+  });
+}
