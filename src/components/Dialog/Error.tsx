@@ -7,7 +7,7 @@ interface ErrorDialogProps {
   address?: Address;
 }
 
-export const ErrorDialog: React.FC<ErrorDialogProps> = ({ open, address }) => {
+const ErrorDialog: React.FC<ErrorDialogProps> = ({ open, address }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -50,3 +50,5 @@ export const ErrorDialog: React.FC<ErrorDialogProps> = ({ open, address }) => {
     </dialog>
   );
 };
+
+export default ErrorDialog;

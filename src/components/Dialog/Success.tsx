@@ -7,10 +7,7 @@ interface SuccessDialogProps {
   receipt: UseWaitForTransactionReceiptReturnType["data"];
 }
 
-export const SuccessDialog: React.FC<SuccessDialogProps> = ({
-  open,
-  receipt,
-}) => {
+const SuccessDialog: React.FC<SuccessDialogProps> = ({ open, receipt }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -48,3 +45,5 @@ export const SuccessDialog: React.FC<SuccessDialogProps> = ({
     </dialog>
   );
 };
+
+export default SuccessDialog;

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import { SuccessDialog } from "./Success";
+import SuccessDialog from "./Success";
 import "@testing-library/jest-dom";
 import { RECEIPT } from "./helper";
 

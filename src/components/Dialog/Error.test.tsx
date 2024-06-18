@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import { ErrorDialog } from "./Error";
+import ErrorDialog from "./Error";
 import "@testing-library/jest-dom";
 import { mockDialogFn, RECEIPT } from "./helper";
 

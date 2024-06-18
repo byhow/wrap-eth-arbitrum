@@ -11,3 +11,20 @@ import { type Address, isAddress } from "viem";
 export function isNonNullAddress(value: unknown): value is Address {
   return typeof value === 'string' && isAddress(value);
 }
+
+export const truncateTo7Digits = (num: number) => {
+  let str = num.toString();
+  if (str.length > 7) {
+    const decimalIndex = str.indexOf(".");
+    const decimalPlaces =
+      decimalIndex === -1 ? 0 : str.length - decimalIndex - 1;
+    const totalPlaces = 7;
+    const placesAfterDecimal = Math.max(
+      0,
+      totalPlaces - (str.length - decimalPlaces)
+    );
+    str = num.toFixed(placesAfterDecimal);
+  }
+  str = parseFloat(str).toString();
+  return str;
+};
