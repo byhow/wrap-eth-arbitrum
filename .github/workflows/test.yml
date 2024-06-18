@@ -21,5 +21,10 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm install # TODO: use cache here
+    
     - name: Unit test
       run: pnpm test
+    
+    # TODO: will work on uploading test coverage to codecov.io
+    - name: Test Coverage
+      run: pnpm coverage
