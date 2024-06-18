@@ -9,7 +9,7 @@ import {
 import { type ChangeEvent, useEffect, useState } from "react";
 import { parseAbi, parseEther } from "viem";
 import ArrowButton from "@/components/Button/ArrowButton";
-import TransactionStatus from "@/components/Swap/TransactionStatue";
+import TransactionStatus from "@/components/Swap/TransactionState";
 import AmountInput from "@/components/Swap/AmountInput";
 import SwapButton from "@/components/Button/SwapButton";
 import { safeGetWethAddress } from "@/lib/config";

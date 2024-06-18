@@ -41,12 +41,6 @@ export const RECEIPT: NonNullable<UseWaitForTransactionReceiptReturnType["data"]
 };
 
 export const mockDialogFn = () => {
-  HTMLDialogElement.prototype.show = vi.fn(function mock(
-    this: HTMLDialogElement
-  ) {
-    this.open = true;
-  });
-
   HTMLDialogElement.prototype.showModal = vi.fn(function mock(
     this: HTMLDialogElement
   ) {
