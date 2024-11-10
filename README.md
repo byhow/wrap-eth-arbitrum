@@ -1,9 +1,11 @@
 # Wrap WETH On Arbitrum
 
 ## Abstract
-This is a simple Client side Next.js App w/ Typescript for you to wrap/unwrap ETH on Arbitrum. You can also visit [here](https://wrap-eth-arbitrum.vercel.app) if you don't want to set it up locally yourself. 
+
+This is a simple Client side Next.js App w/ Typescript for you to wrap/unwrap ETH on Arbitrum. You can also visit [here](https://wrap-eth-arbitrum.vercel.app) if you don't want to set it up locally yourself.
 
 Some of the notable packages that were used:
+
 - [Next.js](https://nextjs.org/) - mega react framework
 - [TailwindCSS](https://tailwindcss.com/) - de facto css framework
 - [RainbowKit](https://www.rainbowkit.com) - plug and play wallet connect
@@ -15,27 +17,21 @@ Some of the notable packages that were used:
 - [Iconify](https://iconify.design/) - free icons
 
 ## Running locally
+
 1. Make sure this is on node >= 20.x and pnpm >= 9.x
 1. Run `cp .env.example .env` and fill in your own config for the node
 1. Run `pnpm install` then `pnpm dev`
 
 ## Test
+
 This code is 100% test covered (except view, hooks and constants), and you can check the test by running `pnpm test` and coverage by running `pnpm coverage`. Each component test suites are under their corresponding folders, and for util functions are in `/tests`.
 
 ## Build
+
 There are also build pipelines that runs over github actions
 
-
-## Requirement
-- use Next.js, React, TypeScript
-- use RainbowKit
-- NO react component lib or headless UI
-- wrap and unwrap ETH on Arbitrum (L2)
-- need to talk to WETH contract directly
-- NO 0x API
-- reference the Matcha/Uniswap UX of wrapping and unwrapping
-
 ### Specs
+
 - A `README.md` that provides instructions for how to run the application and anything else.
 - A user can connect a wallet (please use [RainbowKit](https://www.rainbowkit.com/)).
 - A user can wrap and unwrap the native asset on Arbitrum.
