@@ -7,8 +7,7 @@ export enum ButtonText {
   INSUFFICIENT_BALANCE = "Insufficient Balance",
 }
 
-
-// TODO: since no 0x api can be used, we will hardcode the exchange rate
+// hardcoded exchange rate
 export const EXCHANGE_RATE = 0.9; // 1 ETH = 0.9 WETH
 
 // methods that we would be using for interacting with WETH
